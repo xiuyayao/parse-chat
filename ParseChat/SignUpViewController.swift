@@ -37,8 +37,12 @@ class SignUpViewController: UIViewController {
             } else {
                 print("User Registered successfully")
                 // manually segue to logged in view
+                // dismiss modal view
+                self.dismiss(animated: true, completion: nil)
             }
         }
+        
+        
     }
 
     override func viewDidLoad() {
@@ -58,6 +62,7 @@ class SignUpViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
 
     /*
