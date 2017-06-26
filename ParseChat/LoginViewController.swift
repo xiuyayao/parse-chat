@@ -7,13 +7,73 @@
 //
 
 import UIKit
+import Parse
 
 class LoginViewController: UIViewController {
+    
+    let loginAlertController = UIAlertController(title: "Invalid Input", message: "Please enter username AND password", preferredStyle: .alert)
+    
+    @IBOutlet weak var usernameLabel: UITextField!
+    @IBOutlet weak var passwordLabel: UITextField!
+    
+    @IBAction func registerUser(_ sender: UIButton) {
+        
+        if usernameLabel.text!.isEmpty || passwordLabel.text!.isEmpty {
+            self.present(self.loginAlertController, animated: true)
+        }
+        
+        // initialize a user object
+        let newUser = PFUser()
+        
+        // set user properties
+        newUser.username = usernameLabel.text
+        // newUser.email = emailLabel.text
+        newUser.password = passwordLabel.text
+        
+        // call sign up function on the object
+        newUser.signUpInBackground { (success: Bool, error: Error?) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                print("User Registered successfully")
+                // manually segue to logged in view
+            }
+        }
+    }
+    
+    @IBAction func loginUser(_ sender: UIButton) {
+        
+        if usernameLabel.text!.isEmpty || passwordLabel.text!.isEmpty {
+            self.present(self.loginAlertController, animated: true)
+        }
+        
+        let username = usernameLabel.text ?? ""
+        let password = passwordLabel.text ?? ""
+        
+        PFUser.logInWithUsername(inBackground: username, password: password) { (user: PFUser?, error: Error?) in
+            if let error = error {
+                print("User log in failed: \(error.localizedDescription)")
+            } else {
+                print("User logged in successfully")
+                // display view controller that needs to shown after successful login
+            }
+        }
+    }
+    
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
+        
+        // create an OK action
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // handle response here.
+        }
+        // add the OK action to the alert controller
+        loginAlertController.addAction(OKAction)
+        
     }
 
     override func didReceiveMemoryWarning() {
