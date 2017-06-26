@@ -1,5 +1,5 @@
 //
-//  LoginViewController.swift
+//  SignUpViewController.swift
 //  ParseChat
 //
 //  Created by Xiuya Yao on 6/26/17.
@@ -9,34 +9,41 @@
 import UIKit
 import Parse
 
-class LoginViewController: UIViewController {
+class SignUpViewController: UIViewController {
     
-    let loginAlertController = UIAlertController(title: "Invalid Input", message: "Please enter username AND password", preferredStyle: .alert)
+    let signUpAlertController = UIAlertController(title: "Invalid Input", message: "Please enter username AND password", preferredStyle: .alert)
     
+    @IBOutlet weak var emailLabel: UITextField!
     @IBOutlet weak var usernameLabel: UITextField!
     @IBOutlet weak var passwordLabel: UITextField!
     
-    @IBAction func loginUser(_ sender: UIButton) {
-        
-        if usernameLabel.text!.isEmpty || passwordLabel.text!.isEmpty {
-            self.present(self.loginAlertController, animated: true)
+    @IBAction func registerUser(_ sender: UIButton) {
+        if emailLabel.text!.isEmpty || usernameLabel.text!.isEmpty || passwordLabel.text!.isEmpty {
+            self.present(self.signUpAlertController, animated: true)
         }
         
-        let username = usernameLabel.text ?? ""
-        let password = passwordLabel.text ?? ""
+        // initialize a user object
+        let newUser = PFUser()
         
-        PFUser.logInWithUsername(inBackground: username, password: password) { (user: PFUser?, error: Error?) in
+        // set user properties
+        newUser.username = usernameLabel.text
+        newUser.email = emailLabel.text
+        newUser.password = passwordLabel.text
+        
+        // call sign up function on the object
+        newUser.signUpInBackground { (success: Bool, error: Error?) in
             if let error = error {
-                print("User log in failed: \(error.localizedDescription)")
+                print(error.localizedDescription)
             } else {
-                print("User logged in successfully")
-                // display view controller that needs to shown after successful login
+                print("User Registered successfully")
+                // manually segue to logged in view
             }
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
         
         // create an OK action
@@ -44,8 +51,7 @@ class LoginViewController: UIViewController {
             // handle response here.
         }
         // add the OK action to the alert controller
-        loginAlertController.addAction(OKAction)
-        
+        signUpAlertController.addAction(OKAction)
     }
 
     override func didReceiveMemoryWarning() {
